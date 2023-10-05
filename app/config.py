@@ -1,4 +1,5 @@
 import os
+from os import environ
 
 UPLOAD_FOLDER = os.path.abspath("./uploads/")
 DB_URI = "TBD"
@@ -25,5 +26,6 @@ class DevelopmentConfig(Config):
     DEBUG=True
     SECRET_KEY = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
     PWD = os.path.abspath(os.curdir)
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{}/agendamiento.sqlite'.format(PWD)
+    #SQLALCHEMY_DATABASE_URI = 'sqlite:///{}/agendamiento.sqlite'.format(PWD)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = environ.get('DB_URL')
