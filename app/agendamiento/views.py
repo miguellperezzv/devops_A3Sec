@@ -1,6 +1,6 @@
 from flask import Blueprint, Response, flash, session, request, g, render_template, redirect, url_for, jsonify, make_response
-from .forms import CreateUsuarioForm
-from .models import create_new_user
+from .forms import CreateUsuarioForm, LoginUsuarioForm
+from .models import create_new_user, login_user
 
 import datetime
 from datetime import timedelta
@@ -50,3 +50,27 @@ def registro():
     
     flash("You're already logged in.", "alert-primary")
     return redirect(url_for('home.index', user = g.user))
+
+@usuario.route("/login",  methods=["GET", 'POST'])
+def login():
+
+    if not g.user: 
+        login_form= LoginUsuarioForm()
+
+        if request.method == 'POST' :
+            email = login_form.email_usuario.data
+            pwd = login_form.pwd_usuario.data
+            
+            #print ("estoy en login voy a buscar ",email,pwd)
+            user = login_user(email, pwd)
+            if user:
+                #flash("Usuario encontrado!", 'success')
+                return redirect(url_for('home.index',user=g.user))
+            else:
+                flash("No se encontro el usuario!", 'error')
+            
+        return render_template('login.html', form=login_form)
+    
+    flash("You're already logged in.", "alert-primary")
+    
+

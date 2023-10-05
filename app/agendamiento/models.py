@@ -13,7 +13,7 @@ class Usuario(db.Model):
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)    
 
     def __repr__(self):
-        return "<{}:{}>".format(self.id, self.title[:10])
+        return "<{}:{}>".format(self.id, self.n_usuario)
 
 
 
@@ -34,3 +34,13 @@ def create_new_user(n_usuario, email, password):
     except Exception as e:
         print ("No se registró el usuario "+ str(e))
         return None
+
+def login_user(email, password):
+    
+    user_found = db.session.query(Usuario).filter_by(email_usuario=email, pwd_usuario = password).first()
+    if user_found:
+        return user_found
+    else:
+        print("No se encontró el usuario ")
+        return None
+        
