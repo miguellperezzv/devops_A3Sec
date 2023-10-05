@@ -1,0 +1,14 @@
+
+{% extends 'base.html' %}
+<h2>Hola mundo!!</h2>
+{% block contenido %}
+
+<form method="POST" action="{{url_for('usuario.registro')}}">
+    
+    {{ form.name.label }} {{ form.name(size=20) }}
+    {{ form.email_usuario.label }} {{ form.email_usuario(size=20) }}
+    {{ form.pwd_usuario.label }} {{ form.pwd_usuario(size=20) }}
+    <input type="submit" value="Registrarme!">
+</form> 
+
+{% endblock %}
