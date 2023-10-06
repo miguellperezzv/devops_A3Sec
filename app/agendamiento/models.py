@@ -10,13 +10,50 @@ class Usuario(db.Model):
     pwd_usuario = db.Column(db.String(200), nullable = False)
 
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
-    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)    
+    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)   
+
+    # FK 
+    #eventos_creados = db.relationship('Evento', backref='creador')  
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.n_usuario)
+    
+class Evento(db.Model):
+    __tablename__ = 'Evento'
+    id = db.Column(db.Integer(), primary_key=True)
+    n_evento = db.Column(db.String(40), nullable = False)
+    d_evento = db.Column(db.String(200), nullable = True)
+    f_evento = db.Column(db.DateTime(), default=datetime.utcnow, nullable = False)
+    modalidad = db.Column(db.String(40), nullable = False)
+    estado = db.Column(db.String(20), nullable = False)
 
+    # NORMALIZACION
+    k_usuario = db.Column(db.Integer(), db.ForeignKey('Usuario.id'))
+    k_lugar = db.Column(db.Integer(), db.ForeignKey('Lugar.id'))
 
+    # FK's
+    #creador = db.relationship("Usuario", back_populates="eventos_creados")  # Cambiar 'usuario_eventos' a 'eventos_creados'
+    #ubicacion = db.relationship("Lugar", back_populates="lugar_eventos")
 
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)    
+
+    def __repr__(self):
+        return "<{}:{}>".format(self.id, self.n_evento)
+    
+class Lugar(db.Model):
+    __tablename__ = 'Lugar'
+    id = db.Column(db.Integer(), primary_key=True)
+    n_lugar = db.Column(db.String(40), nullable = False)
+    d_lugar = db.Column(db.String(200), nullable = True)
+
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)    
+
+    lugar_eventos = db.relationship('Evento', backref='ubicacion') 
+
+    def __repr__(self):
+        return "<{}:{}>".format(self.id, self.n_lugar)
 
 #####################################Funciones 
 #mis consultas 
