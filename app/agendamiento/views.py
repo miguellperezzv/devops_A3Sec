@@ -1,6 +1,6 @@
 from flask import Blueprint, Response, flash, session, request, g, render_template, redirect, url_for, jsonify, make_response
-from .forms import CreateUsuarioForm, LoginUsuarioForm
-from .models import create_new_user, login_user
+from .forms import CreateUsuarioForm, LoginUsuarioForm, EventoForm
+from .models import create_new_user, login_user, create_new_evento, create_new_lugar, get_eventos
 
 import datetime
 from datetime import timedelta
@@ -71,6 +71,45 @@ def login():
             
         return render_template('login.html', form=login_form)
     
-    flash("You're already logged in.", "alert-primary")
-    
+    flash("You're already logged in.", "success")
+
+@agenda.route("/nuevo", methods=["GET", 'POST'])
+def nuevo_evento():
+    form_evento=EventoForm()
+
+    if request.method == 'POST':
+        n_evento = form_evento.name.data
+        d_evento = form_evento.descr.data
+        #k_artista =  form_evento(form_new_release.k_artista.data)
+        f_evento = form_evento.fecha.data
+        modalidad = form_evento.k_modalidad.data
+
+        k_evento= create_new_evento(n_evento, d_evento, f_evento, modalidad)
+        
+        if k_evento:
+            flash("Evento agregado!")
+            return redirect(url_for('home.index'), 'success')
+
+        else:
+            flash("No se pudo registrar el evento", 'error')
+            return redirect(url_for('home.index'))
+    return render_template("nuevo_evento.html", form = form_evento )
+
+
+@agenda.route("/lugar", methods=["GET", 'POST'])
+def nuevo_lugar():
+    if request.method == 'POST':
+        data = request.json
+        n_lugar = data["n_lugar"]
+        d_lugar = data["d_lugar"]
+        print("RESPONSE "+n_lugar)
+        k_evento = create_new_lugar(n_lugar,d_lugar)
+
+        if k_evento:
+            return {"message":"Lugar "+str(k_evento)+"creado! "},200
+        else:
+            return {"message":"No se pudo crear el Lugar! "},400
+    elif request.method == 'GET':
+        eventos = get_eventos()
+        return eventos
 

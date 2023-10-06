@@ -1,0 +1,9 @@
+<form method="POST" action="{{url_for('agenda.nuevo_evento')}}" enctype="multipart/form-data">
+    
+    {{ form.csrf_token }}
+    {{form.n_evento.label}} {{form.n_evento.(size = 100)}}
+    {{ form.d_evento.label }} {{ form.d_evento(size=200) }}
+    
+    
+    <input type="submit" value="Agregar Artista">
+</form> 
