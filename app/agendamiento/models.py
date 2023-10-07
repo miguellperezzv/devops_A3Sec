@@ -1,6 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from ..db import db
+from sqlalchemy.inspection import inspect
+import json
+from flask import Flask, jsonify
+
 
 class Usuario(db.Model):
     __tablename__ = 'Usuario'
@@ -54,6 +58,24 @@ class Lugar(db.Model):
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.n_lugar)
+    
+    def to_dict(self):
+        return {"id":self.id, 
+                "n_lugar":self.n_lugar,
+                "d_lugar":self.d_lugar
+                }
+
+    
+
+    
+class Serializer(object):
+
+    def serialize(self):
+        return {c: getattr(self, c) for c in inspect(self).attrs.keys()}
+
+    @staticmethod
+    def serialize_list(l):
+        return [m.serialize() for m in l]
 
 #####################################Funciones 
 #mis consultas 
@@ -103,6 +125,9 @@ def create_new_lugar(n_lugar,d_lugar):
         print ("No se registró el evento "+ str(e))
         return None     
     
-def get_eventos():
-    eventos = db.session.query(Evento).all()
-    return eventos
+def get_lugares():
+    lugares = db.session.query(Lugar).all()
+    print("lugares ", lugares)
+  
+
+    return lugares

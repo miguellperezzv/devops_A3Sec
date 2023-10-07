@@ -1,6 +1,7 @@
 from flask import Blueprint, Response, flash, session, request, g, render_template, redirect, url_for, jsonify, make_response
 from .forms import CreateUsuarioForm, LoginUsuarioForm, EventoForm
-from .models import create_new_user, login_user, create_new_evento, create_new_lugar, get_eventos
+from .models import create_new_user, login_user, create_new_evento, create_new_lugar, get_lugares
+import json
 
 import datetime
 from datetime import timedelta
@@ -83,8 +84,9 @@ def nuevo_evento():
         #k_artista =  form_evento(form_new_release.k_artista.data)
         f_evento = form_evento.fecha.data
         modalidad = form_evento.k_modalidad.data
+        k_lugar = form_evento.k_lugar.data
+        k_evento= create_new_evento(n_evento, d_evento, f_evento, modalidad, k_lugar)
 
-        k_evento= create_new_evento(n_evento, d_evento, f_evento, modalidad)
         
         if k_evento:
             flash("Evento agregado!")
@@ -93,6 +95,9 @@ def nuevo_evento():
         else:
             flash("No se pudo registrar el evento", 'error')
             return redirect(url_for('home.index'))
+        
+    lugares = obtener_lugares()
+    form_evento.k_lugar.choices = [(lugar.id, lugar.n_lugar) for lugar in lugares]
     return render_template("nuevo_evento.html", form = form_evento )
 
 
@@ -110,6 +115,16 @@ def nuevo_lugar():
         else:
             return {"message":"No se pudo crear el Lugar! "},400
     elif request.method == 'GET':
-        eventos = get_eventos()
-        return eventos
+        eventos = get_lugares()
+        
+        json_eventos = []
+        for e in eventos:
+            #print(vars(e))
+            json_eventos.append(e.to_dict())
+        print(json_eventos)
+        return json_eventos
+    
+def obtener_lugares():
+    eventos = get_lugares()
+    return eventos
 

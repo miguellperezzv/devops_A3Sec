@@ -1,11 +1,13 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, NumberRange
-from wtforms import StringField, SelectField, PasswordField, IntegerField, FileField, DateTimeField
+from wtforms import StringField, SelectField, PasswordField, IntegerField, FileField, DateTimeField, DateField
+from wtforms.fields import DateTimeLocalField
 #from wtforms.fields.html5 import DateField
 from datetime import date, datetime
 #from wtforms.ext.sqlalchemy.fields import QuerySelectField
 #from wtforms.widgets import html5 as h5widgets
 #import pycountry
+
 
 
 class CreateUsuarioForm(FlaskForm):
@@ -29,13 +31,16 @@ class EditUsuarioForm(FlaskForm):
 class EventoForm(FlaskForm):
     n_evento = StringField('Nombre', validators=[DataRequired(message="Nombre del evento")])
     d_evento = StringField('Descripción', validators=[DataRequired(message="Descricpión del evento")])
-    f_evento = DateTimeField('Fecha del evento', validators=[DataRequired(message="Ingresa una fecha y hora especifica")])
-    k_modalidad = SelectField("Modalidad", id="modalidad", choices=[])
+    #f_evento = DateField("Fecha de Lanzamiento", default=date.today, format='%Y-%m-%d %H:%M')
+    f_evento = DateTimeLocalField("Fecha de Lanzamiento", default=date.today, format='%Y-%m-%d %H:%M')
+    k_modalidad = SelectField("Modalidad", id="modalidad", choices=["PRESENCIAL", "VIRTUAL"])
+    k_lugar = SelectField('Selecciona un lugar', coerce=int)
+    
+    #lugares = obtener_lugares()
 
-    def __init__(self, modalidad: list = None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if modalidad:
-            self.k_modalidad.choices = ["PRESENCIAL", "VIRTUAL"]
+    #k_lugar = SelectField("Lugar", id="lugar", choices=[ (lugar.id, lugar.n_lugar) for lugar in lugares])
+
+
     
 
     

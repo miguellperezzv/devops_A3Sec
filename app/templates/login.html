@@ -6,7 +6,7 @@
 <div class="text-center">
 <form method="POST" action="{{url_for('usuario.login')}}" class="form-signin">
     <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
-    <label for="inputEmail" class="sr-only">{{ form.email_usuario.label }}}</label>
+    <label for="inputEmail" class="sr-only">{{ form.email_usuario.label }}</label>
     {{ form.email_usuario(size=20) }}
     <label for="inputPassword" class="sr-only">{{ form.pwd_usuario.label }} </label> 
     {{ form.pwd_usuario(size=20) }}
