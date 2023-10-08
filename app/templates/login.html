@@ -1,19 +1,24 @@
-
 {% extends 'base.html' %}
-<h2>Hola mundo!!</h2>
+
 {% block contenido %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-sm-12">
+            <form method="POST" action="{{ url_for('usuario.login') }}" class="form-signin">
+                <img class="mb-4 mx-auto d-block" src="{{ url_for('static', filename='abc.jpg') }}" alt="Mi imagen" width="150" height="150">
+                <h1 class="h3 mb-3 font-weight-normal text-center">Iniciar Sesión</h1>
 
-<div class="text-center">
-<form method="POST" action="{{url_for('usuario.login')}}" class="form-signin">
-    <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
-    <label for="inputEmail" class="sr-only">{{ form.email_usuario.label }}</label>
-    {{ form.email_usuario(size=20) }}
-    <label for="inputPassword" class="sr-only">{{ form.pwd_usuario.label }} </label> 
-    {{ form.pwd_usuario(size=20) }}
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
+                <label for="inputEmail" class="sr-only">{{ form.email_usuario.label }}</label>
+                {{ form.email_usuario(class="form-control", placeholder="Correo electrónico", required=true) }}
 
-</form> 
+                <label for="inputPassword" class="sr-only">{{ form.pwd_usuario.label }}</label>
+                {{ form.pwd_usuario(class="form-control", placeholder="Contraseña", required=true) }}
+
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
+
+                <p class="mt-3 text-center">¿No tienes una cuenta? <a href="{{ url_for('usuario.registro') }}">Registrarse</a></p>
+            </form>
+        </div>
+    </div>
 </div>
-
-
 {% endblock %}

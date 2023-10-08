@@ -14,6 +14,7 @@ ENDPOINTS = [('/',home),('/agenda',agenda), ('/usuario', usuario) ]
 
 def create_app(config=DevelopmentConfig):
     app = Flask(__name__)
+    #app.static_folder = 'static'
     app.config.from_object(config)
     #app.config.from_envvar('CONFIG_SETTINGS')
 
@@ -25,6 +26,7 @@ def create_app(config=DevelopmentConfig):
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:pass@localhost/flask_app_db'
     
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(seconds=180)
+
 
     with app.app_context():
         db.create_all()

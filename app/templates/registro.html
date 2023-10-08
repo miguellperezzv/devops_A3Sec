@@ -1,14 +1,26 @@
-
 {% extends 'base.html' %}
-<h2>Hola mundo!!</h2>
+
 {% block contenido %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-sm-12">
 
-<form method="POST" action="{{url_for('usuario.registro')}}">
-    
-    {{ form.name.label }} {{ form.name(size=20) }}
-    {{ form.email_usuario.label }} {{ form.email_usuario(size=20) }}
-    {{ form.pwd_usuario.label }} {{ form.pwd_usuario(size=20) }}
-    <input type="submit" value="Registrarme!">
-</form> 
-
+            <form method="POST" action="{{ url_for('usuario.registro') }}" class="form-signup">
+                <div class="form-group">
+                    {{ form.name.label(class="mb-1") }}
+                    {{ form.name(class="form-control", placeholder="Nombre", required=true) }}
+                </div>
+                <div class="form-group">
+                    {{ form.email_usuario.label(class="mb-1") }}
+                    {{ form.email_usuario(class="form-control", placeholder="Correo electrónico", required=true) }}
+                </div>
+                <div class="form-group">
+                    {{ form.pwd_usuario.label(class="mb-1") }}
+                    {{ form.pwd_usuario(class="form-control", placeholder="Contraseña", required=true) }}
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Registrarme</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
