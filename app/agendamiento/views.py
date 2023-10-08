@@ -235,6 +235,22 @@ def eliminar_evento(id):
         return {},200
     else:
         return {},500
+    
+@agenda.route("/registrar_lugar", methods =["POST"])
+@token_required
+def registrar_lugar():
+        
+        if request.method == "POST":
+            form_lugar = LugarForm()
+            n_lugar = form_lugar.n_lugar.data
+            d_lugar = form_lugar.d_lugar.data
+            lugar = create_new_lugar(n_lugar, d_lugar)
+            if lugar:
+                flash("Lugar agregado", "success")
+                return redirect(url_for('agenda.admin'))
+            else:
+                flash("No se pudo agregar el lugar", "error")
+                return redirect(url_for('agenda.admin'))
 
 
 def obtener_lugares():

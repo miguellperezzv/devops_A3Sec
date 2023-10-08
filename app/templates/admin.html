@@ -35,6 +35,22 @@
                         {% endfor %}
                     </tbody>
                 </table>
+
+                <br> <hr>
+
+                <h3>Nuevo lugar</h3>
+                <form method="POST" action="{{ url_for('agenda.registrar_lugar') }}" enctype="multipart/form-data" class="my-4">
+                  <div class="mb-3">
+                      <label for="n_lugar" class="form-label">Nombre del lugar</label>
+                      {{ form_lugar.n_lugar(class="form-control", placeholder="Ingrese el nombre del lugar", required=true) }}
+                  </div>
+                  <div class="mb-3">
+                      <label for="d_lugar" class="form-label">Descripción del lugar</label>
+                      {{ form_lugar.d_lugar(class="form-control", placeholder="Ingrese la descripción del lugar", required=true) }}
+                  </div>
+                  <button type="submit" class="btn btn-primary">Registrar Nuevo Lugar</button>
+              </form>
+              
             </div>
             
             
