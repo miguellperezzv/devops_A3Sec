@@ -103,13 +103,14 @@ def login_user(email, password):
         print("No se encontró el usuario ")
         return None
     
-def create_new_evento (n_evento, d_evento, f_evento, modalidad, estado, k_lugar, k_usuario):
-    None
+def create_new_evento (n_evento, d_evento, f_evento, modalidad, k_lugar, estado, k_usuario):
+
     evento = Evento(  n_evento = n_evento, d_evento = d_evento, f_evento = f_evento, modalidad = modalidad, estado=estado, k_lugar = k_lugar, k_usuario  = k_usuario )
 
     try:
         db.session.add(evento)
         db.session.commit()
+        print ("Se registró el evento ")
         return evento
     except Exception as e:
         print ("No se registró el evento "+ str(e))
@@ -131,3 +132,11 @@ def get_lugares():
   
 
     return lugares
+
+def get_eventos(id=None):
+    if id is None:
+        print("No hay filtro de eventos")
+        eventos = db.session.query(Evento).all()
+    else:
+        eventos = db.session.query(Evento).filter_by(k_usuario=id).all()
+    return eventos

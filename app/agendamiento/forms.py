@@ -40,6 +40,10 @@ class EventoForm(FlaskForm):
 
     #k_lugar = SelectField("Lugar", id="lugar", choices=[ (lugar.id, lugar.n_lugar) for lugar in lugares])
 
+class LugarForm(FlaskForm):
+    n_lugar = StringField('Lugar', validators=[DataRequired(message="Nombre del lugar")])
+    d_lugar = StringField('Descripcion', validators=[DataRequired(message="Descripción del lugar")])
+
 
     
 

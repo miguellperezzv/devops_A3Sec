@@ -2,6 +2,29 @@
 {% extends 'base.html' %}
 
 {% block contenido %}
-<h2>Hola Mundo !!!</h2>
+
+<div class="container">
+    <div class="row">
+        {% for e in eventos %}
+        <div class="col-md-3 col-sm-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">{{e.n_evento}}</h4>
+                    <h5 class="card-subtitle mb-2 text-muted">{{e.modalidad}} - {{e.k_lugar}}</h5>
+
+                    {%if e.estado !='CREADO'%}
+                    <h9 class="card-subtitle mb-2 text-danger" >{{e.estado}}</h9>
+                    {% endif %}
+                    <p class="card-text">{{e.d_evento}}</p>
+                    <a href="#" class="card-link">Editar</a>
+                    <a href="#" class="card-link">Cancelar</a>
+                  </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
 
 {% endblock %}
