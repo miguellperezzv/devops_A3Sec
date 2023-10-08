@@ -1,6 +1,6 @@
 from flask import Blueprint, Response, flash, session, request, g, render_template, redirect, url_for, jsonify, make_response
 from .forms import CreateUsuarioForm, LoginUsuarioForm, EventoForm, LugarForm
-from .models import create_new_user, login_user, create_new_evento, create_new_lugar, get_lugares, get_eventos, get_lugar_by_id,edit_evento, traer_fecha_evento
+from .models import *
 import json
 from flask_jwt_extended import create_access_token, verify_jwt_in_request
 import datetime
@@ -44,7 +44,6 @@ def token_required(f):
 def before_request():
     if "user" in session:
         g.user = session["user"]
-        print(g.user)
     else:
         url_completa = request.url
         g.user = None
@@ -100,8 +99,6 @@ def login():
         if request.method == 'POST' :
             email = login_form.email_usuario.data
             pwd = login_form.pwd_usuario.data
-            
-            #print ("estoy en login voy a buscar ",email,pwd)
             user = login_user(email, pwd)
             if user:
                 #flash("Usuario encontrado!", 'success')
@@ -162,7 +159,6 @@ def nuevo_lugar():
         data = request.json
         n_lugar = data["n_lugar"]
         d_lugar = data["d_lugar"]
-        print("RESPONSE "+n_lugar)
         k_evento = create_new_lugar(n_lugar,d_lugar)
 
         if k_evento:
@@ -174,9 +170,7 @@ def nuevo_lugar():
         
         json_eventos = []
         for e in eventos:
-            #print(vars(e))
             json_eventos.append(e.to_dict())
-        print(json_eventos)
         return json_eventos
     
 @agenda.route("/",methods=["GET"] )
@@ -189,15 +183,11 @@ def editar_evento(id):
     form_evento=EventoForm()
 
     if request.method == 'POST':
-        print("EVENTO ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + str(form_evento.f_evento.data))
         n_evento = form_evento.n_evento.data
         k_lugar = form_evento.k_lugar.data
         d_evento = form_evento.d_evento.data
-        #k_artista =  form_evento(form_new_release.k_artista.data)
         f_evento = datetime.datetime.now()
         modalidad = form_evento.k_modalidad.data
-
-        print("FECHA EVETO "+str(form_evento.f_evento.data))
         k_evento= edit_evento(id, n_evento, d_evento, f_evento, modalidad, k_lugar, "EDITADO", g.user[0]["id"])
 
         
@@ -220,6 +210,24 @@ def editar_evento(id):
     form_evento.k_lugar.data = evento.k_lugar
 
     return render_template("editar_evento.html", form = form_evento, id=id )
+
+@agenda.route("/estado_evento/<int:id>/<string:estado>", methods = ["POST"])
+def estado_evento(id,estado):
+    print(request.url)
+    status= status_event(id,estado)
+    if status:
+        return {},200
+    else:
+        return {},500
+    
+@agenda.route("/eliminar_evento/<int:id>", methods = ["POST"])
+def eliminar_evento(id):
+    status= del_event(id)
+    if status:
+        return {},200
+    else:
+        return {},500
+
 
 def obtener_lugares():
     lugares = get_lugares()

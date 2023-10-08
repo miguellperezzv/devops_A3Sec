@@ -17,19 +17,114 @@
                     {% endif %}
                     <p class="card-text">{{e.d_evento}}</p>
 
-                    {%if edicion%}
-                    <a href="{{url_for('agenda.editar_evento', id=e.id)}}" class="card-link" >Editar</a>
-                    <a href="#" class="card-link">Cancelar</a>
-                    <a href="#" class="card-link">Cancelar</a>
-                    {%endif%}
+                    {% if edicion and e.estado == 'CREADO' or e.estado == 'EDITADO' %}
+                    <a href="{{ url_for('agenda.editar_evento', id=e.id) }}" class="card-link">Editar</a>
+                    <a href="#" class="card-link" onclick="CancelarEvento('{{ e.id }}', '{{ e.n_evento }}')">Cancelar</a>
+                    <a href="#" class="card-link" onclick="EliminarEvento('{{ e.id }}', '{{ e.n_evento }}')">Eliminar</a>
+
+                    {% elif edicion and e.estado == 'CANCELADO' %}
+                    <a>Editar</a>
+                    <a href="#" class="card-link" onclick="AgregarEvento('{{ e.id }}', '{{ e.n_evento }}')">Agregar</a>
+                    <a href="#" class="card-link" onclick="EliminarEvento('{{ e.id }}', '{{ e.n_evento }}')">Eliminar</a>
+
+
+                {% endif %}
+                
                   </div>
             </div>
         </div>
+
+        <script>
+            function CancelarEvento(id, n_evento) {
+                Swal.fire({
+                    title: 'Cancelar evento',
+                    text: `¿Desea cancelar el evento "${n_evento}"?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, cancelar',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Realizar una solicitud AJAX para cancelar el evento
+                        $.ajax({
+                            url: "{{ url_for('agenda.estado_evento', id=e.id, estado='CANCELADO') }}",
+                            type: "POST",  // Puedes cambiar el método HTTP según tu configuración
+                            success: function(data) {
+                                // Manejar la respuesta del servidor, como mostrar un mensaje de éxito
+                                Swal.fire('¡Evento cancelado!', '', 'success');
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log("Error al cancelar el evento.");
+                                console.log("Error: " + textStatus);
+                                console.log("Excepción: " + errorThrown);
+                            }
+                        });
+                    }
+                });
+            }
+        </script>
+
+<script>
+    function EliminarEvento(id, n_evento) {
+        Swal.fire({
+            title: 'Eliminar evento',
+            text: `¿Desea eliminar el evento "${n_evento}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url_for('agenda.eliminar_evento', id=e.id) }}",
+                    type: "POST", 
+                    success: function(data) {
+                        Swal.fire('¡Evento eliminado!', '', 'success');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("Error al eliminar el evento.");
+                        console.log("Error: " + textStatus);
+                        console.log("Excepción: " + errorThrown);
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+    function AgregarEvento(id, n_evento) {
+        Swal.fire({
+            title: 'Agregar evento',
+            text: `¿Desea agregar el evento "${n_evento}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, agregar',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Realizar una solicitud AJAX para cancelar el evento
+                $.ajax({
+                    url: "{{ url_for('agenda.estado_evento', id=e.id, estado='CREADO') }}",
+                    type: "POST",  // Puedes cambiar el método HTTP según tu configuración
+                    success: function(data) {
+                        // Manejar la respuesta del servidor, como mostrar un mensaje de éxito
+                        Swal.fire('¡Evento agregado!', '', 'success');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("Error al agregar el evento.");
+                        console.log("Error: " + textStatus);
+                        console.log("Excepción: " + errorThrown);
+                    }
+                });
+            }
+        });
+    }
+</script>
+        
         {% endfor %}
     </div>
 </div>
-
-
 
 
 

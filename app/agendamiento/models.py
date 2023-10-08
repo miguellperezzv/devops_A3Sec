@@ -80,8 +80,6 @@ class Serializer(object):
 #####################################Funciones 
 #mis consultas 
 def create_new_user(n_usuario, email, password):
-    print(email)
-    print(password)
 
     #k_usuario = "U"+str(len(get_all_users())+1)
     user = Usuario( n_usuario =n_usuario, email_usuario=email, pwd_usuario=password )
@@ -128,14 +126,12 @@ def create_new_lugar(n_lugar,d_lugar):
     
 def get_lugares():
     lugares = db.session.query(Lugar).all()
-    print("lugares ", lugares)
   
 
     return lugares
 
 def get_eventos(id=None):
     if id is None:
-        print("No hay filtro de eventos")
         eventos = db.session.query(Evento).all()
     else:
         eventos = db.session.query(Evento).filter_by(k_usuario=id).all()
@@ -167,7 +163,29 @@ def edit_evento(id, n_evento, d_evento, f_evento, modalidad, k_lugar, estado, us
 def traer_fecha_evento(id):
     evento = db.session.query(Evento).filter_by(id=id).first()
     if evento:
-        print("FECHA BD",evento.f_evento)
         return evento.f_evento
     else:
+        return None
+
+def status_event(id, status):
+    print("Buscando evento ")
+    evento = db.session.query(Evento).filter_by(id=id).first()
+    if evento:
+        evento.estado = status
+        db.session.commit()
+        print("Se actualizó el evento")
+        return evento
+    else:
+        print("nO actualizó el evento")
+        return None
+    
+def del_event(id):
+    evento = db.session.query(Evento).filter_by(id=id).first()
+    if evento:
+        db.session.delete(evento)
+        db.session.commit()
+        print("Se eliminó el evento")
+        return evento
+    else:
+        print("nO se eliminó el evento")
         return None
