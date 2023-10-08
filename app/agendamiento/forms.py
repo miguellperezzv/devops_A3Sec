@@ -34,7 +34,7 @@ class EventoForm(FlaskForm):
     #f_evento = DateField("Fecha de Lanzamiento", default=date.today, format='%Y-%m-%d %H:%M')
     f_evento = DateTimeLocalField("Fecha de Lanzamiento", default=date.today, format='%Y-%m-%d %H:%M')
     k_modalidad = SelectField("Modalidad", id="modalidad", choices=["PRESENCIAL", "VIRTUAL"])
-    k_lugar = SelectField('Selecciona un lugar', coerce=int)
+    k_lugar = SelectField('Selecciona un lugar')
     
     #lugares = obtener_lugares()
 

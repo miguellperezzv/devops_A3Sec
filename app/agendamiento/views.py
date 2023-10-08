@@ -1,6 +1,6 @@
 from flask import Blueprint, Response, flash, session, request, g, render_template, redirect, url_for, jsonify, make_response
 from .forms import CreateUsuarioForm, LoginUsuarioForm, EventoForm, LugarForm
-from .models import create_new_user, login_user, create_new_evento, create_new_lugar, get_lugares, get_eventos
+from .models import create_new_user, login_user, create_new_evento, create_new_lugar, get_lugares, get_eventos, get_lugar_by_id,edit_evento, traer_fecha_evento
 import json
 from flask_jwt_extended import create_access_token, verify_jwt_in_request
 import datetime
@@ -43,12 +43,10 @@ def token_required(f):
 @agenda.before_request
 def before_request():
     if "user" in session:
-
         g.user = session["user"]
         print(g.user)
     else:
         url_completa = request.url
-        print("URL de la solicitud:", url_completa)
         g.user = None
         #flash("Debe iniciar sesión para gestionar eventos", "error")
         return redirect(url_for('usuario.login'))
@@ -56,7 +54,6 @@ def before_request():
 
 @usuario.before_request
 def before():
-    print(session)
     if "user" in session:
         g.user = session["user"]
     else:
@@ -66,7 +63,7 @@ def before():
 @home.route("/")
 def index():
     eventos = get_eventos()
-    return render_template("inicio.html", eventos = eventos)
+    return render_template("inicio.html", eventos = eventos, edicion=False)
 
 @usuario.route("/registro",  methods=["GET", 'POST'])
 def registro():
@@ -128,15 +125,6 @@ def logout():
 def admin():
     form_lugar = LugarForm()
     lugares = obtener_lugares()
-    
-    #identity = get_jwt_identity()  # Obtén la identidad del token JWT actual
-    
-    # Verifica que el token JWT almacenado en la sesión coincida con el token actual
-    #if session.get("access_token") != identity:
-    #    flash("Token JWT no válido", "error")
-    #    return redirect(url_for('usuario.login'))
-    
-    # El token JWT es válido, procede con la vista protegida
     return render_template('admin.html', form_lugar=form_lugar, lugares=lugares)
 
 
@@ -165,7 +153,6 @@ def nuevo_evento():
         
     lugares = obtener_lugares()
     form_evento.k_lugar.choices = [(lugar.id, lugar.n_lugar) for lugar in lugares]
-    print("global!!!!!->", g.user)
     return render_template("nuevo_evento.html", form = form_evento )
 
 
@@ -195,11 +182,52 @@ def nuevo_lugar():
 @agenda.route("/",methods=["GET"] )
 def mis_eventos():
     eventos = get_eventos(g.user[0]["id"])
-    return render_template("inicio.html", eventos = eventos)
+    return render_template("inicio.html", eventos = eventos, edicion=True)
+
+@agenda.route("editar_evento/<int:id>", methods=["GET", "POST"])
+def editar_evento(id):
+    form_evento=EventoForm()
+
+    if request.method == 'POST':
+        print("EVENTO ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + str(form_evento.f_evento.data))
+        n_evento = form_evento.n_evento.data
+        k_lugar = form_evento.k_lugar.data
+        d_evento = form_evento.d_evento.data
+        #k_artista =  form_evento(form_new_release.k_artista.data)
+        f_evento = datetime.datetime.now()
+        modalidad = form_evento.k_modalidad.data
+
+        print("FECHA EVETO "+str(form_evento.f_evento.data))
+        k_evento= edit_evento(id, n_evento, d_evento, f_evento, modalidad, k_lugar, "EDITADO", g.user[0]["id"])
+
+        
+        if k_evento:
+            flash("Evento editado!",  'success')
+            return redirect(url_for('home.index'))
+
+        else:
+            flash("No se pudo editar el evento", 'error')
+            return redirect(url_for('home.index'))
+        
+    evento = get_lugar_by_id(id)
+    form_evento.f_evento.data = evento.f_evento
+    lugares = obtener_lugares()
+    form_evento.k_lugar.choices = [(lugar.id, lugar.n_lugar) for lugar in lugares]
+    form_evento.n_evento.data = evento.n_evento
+    form_evento.d_evento.data = evento.d_evento
+
+    form_evento.k_modalidad.data = evento.modalidad
+    form_evento.k_lugar.data = evento.k_lugar
+
+    return render_template("editar_evento.html", form = form_evento, id=id )
 
 def obtener_lugares():
     lugares = get_lugares()
     return lugares
+
+
+
+
 
 def create_token(usuario):
     #username = request.json.get("username", None)
@@ -207,6 +235,3 @@ def create_token(usuario):
     access_token = create_access_token(identity=usuario)
     session["access_token"] = access_token
     return jsonify({ "access_token": access_token, "user_id": usuario })
-
-
-

@@ -16,8 +16,12 @@
                     <h9 class="card-subtitle mb-2 text-danger" >{{e.estado}}</h9>
                     {% endif %}
                     <p class="card-text">{{e.d_evento}}</p>
-                    <a href="#" class="card-link">Editar</a>
+
+                    {%if edicion%}
+                    <a href="{{url_for('agenda.editar_evento', id=e.id)}}" class="card-link" >Editar</a>
                     <a href="#" class="card-link">Cancelar</a>
+                    <a href="#" class="card-link">Cancelar</a>
+                    {%endif%}
                   </div>
             </div>
         </div>
@@ -27,4 +31,8 @@
 
 
 
+
+
+
 {% endblock %}
+

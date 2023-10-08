@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block contenido %}
+
+    <form method="POST" action="{{url_for('agenda.editar_evento', id=id)}}" enctype="multipart/form-data">
+        
+        <h1>{{form.n_evento.label}}</h1>
+        <h1>{{form.n_evento(size = 100)}}</h1> 
+        <h1>{{form.d_evento.label }}</h1> 
+        <h1>{{ form.d_evento(size=200) }}</h1>
+        {{form.f_evento.label}} {{form.f_evento}}
+        {{form.k_modalidad}}
+        {{form.k_lugar}}
+        
+        
+        
+        <input type="submit" value="Editar Evento">
+    </form> 
+    
+
+    {% endblock %}

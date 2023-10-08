@@ -140,3 +140,34 @@ def get_eventos(id=None):
     else:
         eventos = db.session.query(Evento).filter_by(k_usuario=id).all()
     return eventos
+
+def get_lugar_by_id(id):
+    evento = db.session.query(Evento).filter_by(id = id).first()
+    return evento
+
+def edit_evento(id, n_evento, d_evento, f_evento, modalidad, k_lugar, estado, usuario):
+    evento = db.session.query(Evento).filter_by(id=id).first()
+
+    if evento:
+        # Actualizar los campos del evento con los nuevos valores
+        evento.n_evento = n_evento
+        evento.d_evento = d_evento
+        evento.f_evento = f_evento
+        evento.modalidad = modalidad
+        evento.k_lugar = k_lugar
+        evento.estado = estado
+        evento.usuario = usuario
+
+        # Guardar los cambios en la base de datos
+        db.session.commit()
+        return evento
+    else:
+        return None
+    
+def traer_fecha_evento(id):
+    evento = db.session.query(Evento).filter_by(id=id).first()
+    if evento:
+        print("FECHA BD",evento.f_evento)
+        return evento.f_evento
+    else:
+        return None
