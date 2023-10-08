@@ -84,7 +84,7 @@ def create_new_user(n_usuario, email, password):
     #k_usuario = "U"+str(len(get_all_users())+1)
     salt = bcrypt.gensalt()
     hashed_pwd= bcrypt.hashpw(password.encode('utf-8'), salt)
-    user = Usuario( n_usuario =n_usuario, email_usuario=email, pwd_usuario=hashed_pwd )
+    user = Usuario( n_usuario =n_usuario, email_usuario=email, pwd_usuario=password )
     
     try:
         db.session.add(user)
@@ -95,15 +95,12 @@ def create_new_user(n_usuario, email, password):
         return None
 
 def login_user(email, password):
-    user_found = db.session.query(Usuario).filter_by(email_usuario=email).first()
-    
+    user_found = db.session.query(Usuario).filter_by(email_usuario=email, pwd_usuario = password).first()
+    stored_password = None
     if user_found:
-        stored_password = user_found.pwd_usuario
-        if bcrypt.checkpw(password.encode("utf-8"), stored_password):
-            return user_found  
-        else:
-            print("Contraseña incorrecta")
-            return None
+        
+        return user_found  
+
     else:
         print("No se encontró el usuario")
         return None

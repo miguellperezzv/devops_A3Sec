@@ -1,4 +1,4 @@
-from .config import DevelopmentConfig
+from .config import DevelopmentConfig, ProductionConfig
 from flask import Flask, jsonify, g
 from .db import db
 from .agendamiento.views import home, agenda, usuario
@@ -12,7 +12,7 @@ import datetime
 
 ENDPOINTS = [('/',home),('/agenda',agenda), ('/usuario', usuario) ]
 
-def create_app(config=DevelopmentConfig):
+def create_app(config=ProductionConfig):
     app = Flask(__name__)
     #app.static_folder = 'static'
     app.config.from_object(config)
@@ -25,7 +25,7 @@ def create_app(config=DevelopmentConfig):
     app.config['SECRET_KEY'] = 'holaMundo'
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:pass@localhost/flask_app_db'
     
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(seconds=180)
+    
 
 
     with app.app_context():
