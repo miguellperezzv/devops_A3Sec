@@ -60,6 +60,7 @@ def before():
         #flash("Debe iniciar sesión para gestionar eventos ", "error")
 
 @home.route("/")
+@token_required
 def index():
     eventos = get_eventos()
     return render_template("inicio.html", eventos = eventos, edicion=False)
@@ -68,7 +69,7 @@ def index():
 def registro():
 
     try:
-        if not g.user and not session["user"]: 
+
             form_signup= CreateUsuarioForm()
 
             if request.method == 'POST' :
@@ -78,16 +79,17 @@ def registro():
                 
                 result = create_new_user(name, email, pwd)
                 if result:
-                    flash("Usuario creado!")
+                    flash("Usuario creado!", "success")
                 else:
-                    flash("No se creo el Usuario!")
+                    flash("No se creo el Usuario!", "error")
                 return redirect(url_for('home.index',user=g.user))
             return render_template('registro.html', form=form_signup)
         
-        flash("Iniciaste sesión", "success")
-        return redirect(url_for('home.index', user = g.user))
-    except:
-        return redirect(url_for('home.index', user = g.user))
+        #flash("Iniciaste sesión", "success")
+        #return redirect(url_for('home.index', user = g.user))
+    except Exception as e:
+        print("ERROR ",str(e))
+        return redirect(url_for('home.index'))
         
 
     
@@ -127,6 +129,7 @@ def admin():
 
 
 @agenda.route("/nuevo", methods=["GET", 'POST'])
+@token_required
 def nuevo_evento():
     form_evento=EventoForm()
 
@@ -154,6 +157,7 @@ def nuevo_evento():
 
 
 @agenda.route("/lugar", methods=["GET", 'POST'])
+@token_required
 def nuevo_lugar():
     if request.method == 'POST':
         data = request.json
@@ -174,11 +178,13 @@ def nuevo_lugar():
         return json_eventos
     
 @agenda.route("/",methods=["GET"] )
+@token_required
 def mis_eventos():
     eventos = get_eventos(g.user[0]["id"])
     return render_template("inicio.html", eventos = eventos, edicion=True)
 
 @agenda.route("editar_evento/<int:id>", methods=["GET", "POST"])
+@token_required
 def editar_evento(id):
     form_evento=EventoForm()
 
@@ -212,6 +218,7 @@ def editar_evento(id):
     return render_template("editar_evento.html", form = form_evento, id=id )
 
 @agenda.route("/estado_evento/<int:id>/<string:estado>", methods = ["POST"])
+@token_required
 def estado_evento(id,estado):
     print(request.url)
     status= status_event(id,estado)
@@ -221,6 +228,7 @@ def estado_evento(id,estado):
         return {},500
     
 @agenda.route("/eliminar_evento/<int:id>", methods = ["POST"])
+@token_required
 def eliminar_evento(id):
     status= del_event(id)
     if status:

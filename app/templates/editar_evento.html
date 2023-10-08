@@ -1,20 +1,40 @@
 {% extends 'base.html' %}
 {% block contenido %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form method="POST" action="{{url_for('agenda.editar_evento', id=id)}}" enctype="multipart/form-data">
+                <h2 class="mb-4">Editar Evento</h2>
+                <div class="mb-3">
+                    <label for="n_evento" class="form-label">Nombre del Evento</label>
+                    {{form.n_evento(class="form-control")}}
+                </div>
 
-    <form method="POST" action="{{url_for('agenda.editar_evento', id=id)}}" enctype="multipart/form-data">
-        
-        <h1>{{form.n_evento.label}}</h1>
-        <h1>{{form.n_evento(size = 100)}}</h1> 
-        <h1>{{form.d_evento.label }}</h1> 
-        <h1>{{ form.d_evento(size=200) }}</h1>
-        {{form.f_evento.label}} {{form.f_evento}}
-        {{form.k_modalidad}}
-        {{form.k_lugar}}
-        
-        
-        
-        <input type="submit" value="Editar Evento">
-    </form> 
-    
+                <div class="mb-3">
+                    <label for="d_evento" class="form-label">Descripción del Evento</label>
+                    {{form.d_evento(class="form-control")}}
+                </div>
 
-    {% endblock %}
+                <div class="mb-3">
+                    <label for="f_evento" class="form-label">Fecha del Evento</label>
+                    {{form.f_evento(class="form-control")}}
+                </div>
+
+                <div class="mb-3">
+                    <label for="k_modalidad" class="form-label">Modalidad</label>
+                    {{form.k_modalidad(class="form-select")}}
+                </div>
+
+                <div class="mb-3">
+                    <label for="k_lugar" class="form-label">Lugar</label>
+                    {{form.k_lugar(class="form-control")}}
+                </div>
+
+
+
+                <button type="submit" class="btn btn-primary">Editar Evento</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

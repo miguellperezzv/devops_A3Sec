@@ -24,7 +24,7 @@ def create_app(config=DevelopmentConfig):
     app.config['SECRET_KEY'] = 'holaMundo'
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:pass@localhost/flask_app_db'
     
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(seconds=10)
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(seconds=180)
 
     with app.app_context():
         db.create_all()
