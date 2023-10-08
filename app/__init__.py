@@ -4,6 +4,9 @@ from .db import db
 from .agendamiento.views import home, agenda, usuario
 from .agendamiento.models import    Usuario
 from os import environ
+from flask_jwt_extended import JWTManager
+import datetime
+
 
 
 
@@ -16,11 +19,12 @@ def create_app(config=DevelopmentConfig):
 
     db.init_app(app)
     #ma.init_app(app)
-
-    app.config['SECRET_KEY'] = 'a really really really really long secret key'
+    app.config["JWT_SECRET_KEY"] = "holaMundo" 
+    jwt = JWTManager(app)
+    app.config['SECRET_KEY'] = 'holaMundo'
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:pass@localhost/flask_app_db'
     
-
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(seconds=10)
 
     with app.app_context():
         db.create_all()

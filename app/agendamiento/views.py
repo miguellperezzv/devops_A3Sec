@@ -2,14 +2,42 @@ from flask import Blueprint, Response, flash, session, request, g, render_templa
 from .forms import CreateUsuarioForm, LoginUsuarioForm, EventoForm, LugarForm
 from .models import create_new_user, login_user, create_new_evento, create_new_lugar, get_lugares, get_eventos
 import json
-
+from flask_jwt_extended import create_access_token, verify_jwt_in_request
 import datetime
 from datetime import timedelta
+from functools import wraps
+import jwt
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 agenda = Blueprint('agenda', __name__ , url_prefix = '/agenda')
 home = Blueprint('home', __name__ )
 usuario = Blueprint('usuario', __name__ , url_prefix = '/usuario')
+
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = session.get("user")[0]["access_token"]
+        if not token:
+            flash("Error de sesión! "+str(e), "error")
+
+            return redirect(url_for('usuario.logout'))
+
+
+        try:
+            data = jwt.decode(token, "holaMundo", algorithms=["HS256"])
+            # Realiza cualquier otra validación que necesites aquí
+        except Exception as e:
+            flash("Su sesión expiró! "+str(e), "error")
+
+            return redirect(url_for('usuario.logout'))
+
+        return f(*args, **kwargs)
+
+    return decorated
+
 
 @home.before_request
 @agenda.before_request
@@ -17,11 +45,12 @@ def before_request():
     if "user" in session:
 
         g.user = session["user"]
+        print(g.user)
     else:
         url_completa = request.url
         print("URL de la solicitud:", url_completa)
         g.user = None
-        flash("Debe iniciar sesión para gestionar eventos", "error")
+        #flash("Debe iniciar sesión para gestionar eventos", "error")
         return redirect(url_for('usuario.login'))
     
 
@@ -79,7 +108,8 @@ def login():
             user = login_user(email, pwd)
             if user:
                 #flash("Usuario encontrado!", 'success')
-                session["user"] = [{"id":user.id, "n_usuario":user.n_usuario, "email_usuario":user.email_usuario}]
+                access_token = create_access_token(identity=user.id)
+                session["user"] = [{"id":user.id, "n_usuario":user.n_usuario, "email_usuario":user.email_usuario, "access_token":access_token} ]
                 return redirect(url_for('home.index', user = session["user"]))
             else:
                 flash("No se encontro el usuario!", 'error')
@@ -94,12 +124,21 @@ def logout():
     return redirect(url_for('home.index',user=g.user))
 
 @agenda.route("/admin", methods=["GET", "POST"])
+@token_required
 def admin():
     form_lugar = LugarForm()
     lugares = obtener_lugares()
-    if request.method == "POST":
-        None
+    
+    #identity = get_jwt_identity()  # Obtén la identidad del token JWT actual
+    
+    # Verifica que el token JWT almacenado en la sesión coincida con el token actual
+    #if session.get("access_token") != identity:
+    #    flash("Token JWT no válido", "error")
+    #    return redirect(url_for('usuario.login'))
+    
+    # El token JWT es válido, procede con la vista protegida
     return render_template('admin.html', form_lugar=form_lugar, lugares=lugares)
+
 
 
 @agenda.route("/nuevo", methods=["GET", 'POST'])
@@ -161,4 +200,13 @@ def mis_eventos():
 def obtener_lugares():
     lugares = get_lugares()
     return lugares
+
+def create_token(usuario):
+    #username = request.json.get("username", None)
+    # create a new token with the user id inside
+    access_token = create_access_token(identity=usuario)
+    session["access_token"] = access_token
+    return jsonify({ "access_token": access_token, "user_id": usuario })
+
+
 
