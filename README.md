@@ -1,4 +1,4 @@
-# Ejecución del proyectp
+# Ejecución del proyecto
 
 
 
@@ -30,7 +30,7 @@ Dirección `http://localhost:5000/` para acceder a la aplicación web ejecutánd
 
 ### 5\. Creación de un lugar
 
-Con usuario creado y acceso correcto, en el menú elegir opciones de amdinistrador y crear lugares para asociar a los eventos que se crearán mas adelantes
+Con usuario creado y acceso correcto, en el menú elegir opciones de administrador y crear lugares para asociar a los eventos que se crearán mas adelante
 
 
 
